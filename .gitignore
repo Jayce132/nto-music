@@ -1,0 +1,38 @@
+# Compiled class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Logs and databases
+*.log
+*.sqlite
+
+# IntelliJ IDEA specific files
+.idea/
+*.iml
+*.iws
+
+# macOS Finder specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+# Gradle (if you are using it)
+.gradle/
+build/
+
+# Maven (if you are using it)
+target/
