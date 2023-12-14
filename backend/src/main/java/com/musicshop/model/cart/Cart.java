@@ -1,19 +1,26 @@
 package com.musicshop.model.cart;
 
 import com.musicshop.model.BaseModel;
+import com.musicshop.model.customer.Customer;
 
 import java.time.LocalDateTime;
+import javax.persistence.*;
 
+@Entity
 public class Cart extends BaseModel<Long> {
-    private Long customerId;
+
+    @OneToOne
+    @JoinColumn(name = "CustomerID")
+    private Customer customer;
+
     private LocalDateTime dateCreated;
 
-    public Long getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public LocalDateTime getDateCreated() {

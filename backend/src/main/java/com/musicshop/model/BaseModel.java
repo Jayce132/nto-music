@@ -1,6 +1,13 @@
 package com.musicshop.model;
 
-public abstract class BaseModel<ID> {
+import javax.persistence.*;
+import java.io.Serializable;
+
+@MappedSuperclass
+public abstract class BaseModel<ID extends Serializable> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private ID id;
 
     public ID getId() {

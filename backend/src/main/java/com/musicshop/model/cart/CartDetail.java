@@ -1,26 +1,37 @@
 package com.musicshop.model.cart;
 
 import com.musicshop.model.BaseModel;
+import com.musicshop.model.product.Product;
 
+import javax.persistence.*;
+
+@Entity
 public class CartDetail extends BaseModel<Long> {
-    private Long cartId;
-    private Long productId;
+
+    @ManyToOne
+    @JoinColumn(name = "cartId")
+    private Cart cart;
+
+    @ManyToOne
+    @JoinColumn(name = "productId")
+    private Product product;
+
     private int quantity;
 
-    public Long getCartId() {
-        return cartId;
+    public Cart getCart() {
+        return cart;
     }
 
-    public void setCartId(Long cartId) {
-        this.cartId = cartId;
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {

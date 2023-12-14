@@ -2,6 +2,9 @@ package com.musicshop.model.customer;
 
 import com.musicshop.model.BaseModel;
 
+import javax.persistence.Entity;
+
+@Entity
 public class Customer extends BaseModel<Long> {
     private String firstName;
     private String lastName;

@@ -1,13 +1,16 @@
 package com.musicshop.discount;
 
 import com.musicshop.model.product.Product;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+@Component
 public class FixedAmountDiscountStrategy implements DiscountStrategy {
     private final BigDecimal discountAmount;
 
-    public FixedAmountDiscountStrategy(BigDecimal discountAmount) {
+    public FixedAmountDiscountStrategy(@Value("${discount.fixedAmount}") BigDecimal discountAmount) {
         this.discountAmount = discountAmount;
     }
 

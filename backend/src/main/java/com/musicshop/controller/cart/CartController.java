@@ -1,73 +1,86 @@
 package com.musicshop.controller.cart;
 
-import com.musicshop.event.product.ProductUpdateEvent;
-import com.musicshop.event.product.ProductUpdateListener;
 import com.musicshop.model.cart.Cart;
 import com.musicshop.model.cart.CartDetail;
 import com.musicshop.model.product.Product;
 import com.musicshop.repository.cart.CartDetailRepository;
 import com.musicshop.repository.cart.CartRepository;
+import com.musicshop.repository.product.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class CartController implements ProductUpdateListener {
+@RestController
+@RequestMapping("/carts")
+public class CartController {
 
     private final CartRepository cartRepository;
     private final CartDetailRepository cartDetailRepository;
+    private final ProductRepository productRepository;
 
-    public CartController(CartRepository cartRepository, CartDetailRepository cartDetailRepository) {
+    @Autowired
+    public CartController(CartRepository cartRepository,
+                          CartDetailRepository cartDetailRepository,
+                          ProductRepository productRepository) {
         this.cartRepository = cartRepository;
         this.cartDetailRepository = cartDetailRepository;
+        this.productRepository = productRepository;
     }
 
-    public Cart createNewCart() {
-        Cart cart = new Cart();
-        // Don't forget to change this
-        cart.setCustomerId(1L);
+    @PostMapping
+    public Cart createNewCart(@RequestBody Cart cart) {
         cart.setDateCreated(LocalDateTime.now());
         return cartRepository.save(cart);
     }
 
-    public void addProductToCart(Cart cart, Long productId, int quantity) {
+    @PostMapping("/{cartId}/products/{productId}")
+    public CartDetail addProductToCart(@PathVariable Long cartId,
+                                       @PathVariable Long productId,
+                                       @RequestParam int quantity) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow();
+        Product product = productRepository.findById(productId).orElseThrow();
         CartDetail cartDetail = new CartDetail();
-        cartDetail.setCartId(cart.getId());
-        cartDetail.setProductId(productId);
+        cartDetail.setCart(cart);
+        cartDetail.setProduct(product);
         cartDetail.setQuantity(quantity);
-        cartDetailRepository.save(cartDetail);
+        return cartDetailRepository.save(cartDetail);
     }
 
-    public Optional<CartDetail> getCartDetailByCartIdAndProductId(Long cartId, Long productId) {
-        return cartDetailRepository.findByCartIdAndProductId(cartId, productId);
+    @GetMapping("/{cartId}/products/{productId}")
+    public ResponseEntity<CartDetail> getCartDetail(@PathVariable Long cartId, @PathVariable Long productId) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow();
+        Product product = productRepository.findById(productId).orElseThrow();
+        return cartDetailRepository.findByCartAndProduct(cart, product)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    public List<CartDetail> listAllCartDetails() {
-        return cartDetailRepository.findAll();
+    @GetMapping("/{cartId}/details")
+    public ResponseEntity<List<CartDetail>> listCartDetails(@PathVariable Long cartId) {
+        return cartRepository.findById(cartId)
+                .map(cart -> {
+                    List<CartDetail> cartDetails = cartDetailRepository.findAll();
+                    cartDetails.removeIf(detail -> !detail.getCart().getId().equals(cartId));
+                    return ResponseEntity.ok(cartDetails);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    public void updateCartDetailQuantity(Long cartDetailId, int newQuantity) {
-        Optional<CartDetail> cartDetailOpt = cartDetailRepository.findById(cartDetailId);
-        if (cartDetailOpt.isPresent()) {
-            CartDetail cartDetail = cartDetailOpt.get();
-            cartDetail.setQuantity(newQuantity);
-            cartDetailRepository.save(cartDetail);
-        }
+    @PutMapping("/details/{detailId}")
+    public CartDetail updateCartDetail(@PathVariable Long detailId,
+                                       @RequestParam int newQuantity) {
+        CartDetail cartDetail = cartDetailRepository.findById(detailId).orElseThrow();
+        cartDetail.setQuantity(newQuantity);
+        return cartDetailRepository.save(cartDetail);
     }
 
-    public void deleteCartDetail(Long cartDetailId) {
-        cartDetailRepository.deleteById(cartDetailId);
-    }
-
-    @Override
-    public void onProductUpdate(ProductUpdateEvent event) {
-        Product updatedProduct = event.getUpdatedProduct();
-        List<CartDetail> allCartDetails = cartDetailRepository.findAll();
-
-        for (CartDetail cartDetail : allCartDetails) {
-            if (cartDetail.getProductId().equals(updatedProduct.getId())) {
-                System.out.println("Product " + updatedProduct.getName() + " in your cart has been updated");
-            }
-        }
+    @DeleteMapping("/details/{detailId}")
+    public ResponseEntity<?> deleteCartDetail(@PathVariable Long detailId) {
+        cartDetailRepository.deleteById(detailId);
+        return ResponseEntity.ok().build();
     }
 }

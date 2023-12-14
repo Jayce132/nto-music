@@ -1,15 +1,22 @@
 package com.musicshop.model.product;
 
 import com.musicshop.model.BaseModel;
+import com.musicshop.model.category.Category;
 
 import java.math.BigDecimal;
+import javax.persistence.*;
 
+@Entity
 public class Product extends BaseModel<Long> {
+
     private String name;
     private String description;
     private BigDecimal price;
     private int quantityAvailable;
-    private Long categoryId;
+
+    @ManyToOne
+    @JoinColumn(name = "CategoryID")
+    private Category category;
 
     public String getName() {
         return name;
@@ -43,11 +50,11 @@ public class Product extends BaseModel<Long> {
         this.quantityAvailable = quantityAvailable;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

@@ -1,8 +1,8 @@
 package com.musicshop.repository.category;
 
 import com.musicshop.model.category.Category;
-import com.musicshop.repository.InMemoryBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public class CategoryRepository extends InMemoryBaseRepository<Category> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
     // Implement specific methods for Category
 }
