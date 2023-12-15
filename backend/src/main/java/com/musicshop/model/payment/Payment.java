@@ -1,22 +1,28 @@
 package com.musicshop.model.payment;
 
 import com.musicshop.model.BaseModel;
+import com.musicshop.model.order.CustomerOrder;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
 public class Payment extends BaseModel<Long> {
-    private Long orderID;
+    @ManyToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private CustomerOrder order;
+
     private String paymentMethod;
     private LocalDateTime paymentDate;
     private BigDecimal amount;
 
-    public Long getOrderID() {
-        return orderID;
+    public CustomerOrder getOrder() {
+        return order;
     }
 
-    public void setOrderID(Long orderID) {
-        this.orderID = orderID;
+    public void setOrder(CustomerOrder order) {
+        this.order = order;
     }
 
     public String getPaymentMethod() {

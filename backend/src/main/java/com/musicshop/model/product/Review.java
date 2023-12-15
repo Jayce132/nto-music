@@ -1,30 +1,39 @@
 package com.musicshop.model.product;
 
 import com.musicshop.model.BaseModel;
+import com.musicshop.model.customer.Customer;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
 public class Review extends BaseModel<Long> {
-    private Long productID;
-    private Long customerID;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
     private int rating;
     private String comment;
     private LocalDateTime datePosted;
 
-    public Long getProductID() {
-        return productID;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductID(Long productID) {
-        this.productID = productID;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
-    public Long getCustomerID() {
-        return customerID;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerID(Long customerID) {
-        this.customerID = customerID;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public int getRating() {

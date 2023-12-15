@@ -14,10 +14,42 @@ function viewProducts() {
                 productDiv.innerHTML = `
                     <strong>${product.name}</strong> - Price: ${product.price}
                     <button onclick="addToCart(${product.id})">Add to Cart</button>
+                    <button onclick="editProduct(${product.id})">Edit</button>
                 `;
                 productList.appendChild(productDiv);
             });
         });
+}
+
+function editProduct(productId) {
+    const newName = prompt('Enter new product name:', '');
+    const newPrice = prompt('Enter new product price:', '');
+
+    if (newName && !isNaN(parseFloat(newPrice))) {
+        const updatedProduct = {
+            name: newName, price: parseFloat(newPrice)
+        };
+
+        fetch(`http://localhost:8080/products/${productId}`, {
+            method: 'PUT', headers: {
+                'Content-Type': 'application/json'
+            }, body: JSON.stringify(updatedProduct)
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    alert('Product updated successfully.');
+                    viewProducts(); // Refresh the product list
+                    viewCart(); // Refresh the cart
+                } else {
+                    alert('Failed to update the product.');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating product:', error);
+            });
+    } else {
+        alert('Invalid input. Please try again.');
+    }
 }
 
 function addToCart(productId) {

@@ -1,24 +1,33 @@
 package com.musicshop.model.customer;
 
 import com.musicshop.model.BaseModel;
+import com.musicshop.model.address.Address;
 
+import javax.persistence.*;
+
+@Entity
 public class CustomerAddress extends BaseModel<Long> {
-    private Long customerID;
-    private Long addressID;
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
-    public Long getCustomerID() {
-        return customerID;
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerID(Long customerID) {
-        this.customerID = customerID;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
-    public Long getAddressID() {
-        return addressID;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setAddressID(Long addressID) {
-        this.addressID = addressID;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

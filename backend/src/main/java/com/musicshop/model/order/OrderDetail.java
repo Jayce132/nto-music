@@ -1,44 +1,35 @@
 package com.musicshop.model.order;
 
 import com.musicshop.model.BaseModel;
+import com.musicshop.model.product.Product;
 
-import java.math.BigDecimal;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 
+@Entity
 public class OrderDetail extends BaseModel<Long> {
-    private Long orderID;
-    private Long productID;
-    private int quantity;
-    private BigDecimal priceEach;
+    @ManyToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private CustomerOrder order;
 
-    public Long getOrderID() {
-        return orderID;
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private Product product;
+
+    public CustomerOrder getOrder() {
+        return order;
     }
 
-    public void setOrderID(Long orderID) {
-        this.orderID = orderID;
+    public void setOrder(CustomerOrder order) {
+        this.order = order;
     }
 
-    public Long getProductID() {
-        return productID;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductID(Long productID) {
-        this.productID = productID;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getPriceEach() {
-        return priceEach;
-    }
-
-    public void setPriceEach(BigDecimal priceEach) {
-        this.priceEach = priceEach;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

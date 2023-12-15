@@ -2,9 +2,11 @@ package com.musicshop.model.product;
 
 import com.musicshop.model.BaseModel;
 import com.musicshop.model.category.Category;
+import com.musicshop.model.product.Review;
 
-import java.math.BigDecimal;
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 public class Product extends BaseModel<Long> {
@@ -15,8 +17,11 @@ public class Product extends BaseModel<Long> {
     private int quantityAvailable;
 
     @ManyToOne
-    @JoinColumn(name = "CategoryID")
+    @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(mappedBy = "product")
+    private Set<Review> reviews;
 
     public String getName() {
         return name;
@@ -56,5 +61,13 @@ public class Product extends BaseModel<Long> {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
     }
 }

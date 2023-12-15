@@ -1,10 +1,12 @@
 package com.musicshop.controller.product;
 
 import com.musicshop.model.product.Product;
+import com.musicshop.event.product.ProductUpdateEvent;
 import com.musicshop.repository.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -14,9 +16,12 @@ public class ProductController {
 
     private final ProductRepository productRepository;
 
+    private final ApplicationEventPublisher eventPublisher;
+
     @Autowired
-    public ProductController(ProductRepository productRepository) {
+    public ProductController(ProductRepository productRepository, ApplicationEventPublisher eventPublisher) {
         this.productRepository = productRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @GetMapping
@@ -32,8 +37,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id,
-                                                 @RequestBody Product productDetails) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
         return productRepository.findById(id)
                 .map(product -> {
                     product.setName(productDetails.getName());
@@ -41,7 +45,11 @@ public class ProductController {
                     product.setPrice(productDetails.getPrice());
                     product.setQuantityAvailable(productDetails.getQuantityAvailable());
                     product.setCategory(productDetails.getCategory());
-                    return ResponseEntity.ok(productRepository.save(product));
+
+                    Product updatedProduct = productRepository.save(product);
+                    eventPublisher.publishEvent(new ProductUpdateEvent(this, updatedProduct));
+
+                    return ResponseEntity.ok(updatedProduct);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

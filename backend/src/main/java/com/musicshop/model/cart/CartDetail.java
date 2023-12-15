@@ -9,11 +9,11 @@ import javax.persistence.*;
 public class CartDetail extends BaseModel<Long> {
 
     @ManyToOne
-    @JoinColumn(name = "cartId")
+    @JoinColumn(name = "cart_id")
     private Cart cart;
 
     @ManyToOne
-    @JoinColumn(name = "productId")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     private int quantity;

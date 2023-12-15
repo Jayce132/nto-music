@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class Cart extends BaseModel<Long> {
 
     @OneToOne
-    @JoinColumn(name = "CustomerID")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     private LocalDateTime dateCreated;

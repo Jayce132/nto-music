@@ -1,8 +1,12 @@
 package com.musicshop.model.customer;
 
 import com.musicshop.model.BaseModel;
+import com.musicshop.model.order.CustomerOrder;
+import com.musicshop.model.product.Review;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.util.Set;
 
 @Entity
 public class Customer extends BaseModel<Long> {
@@ -10,6 +14,15 @@ public class Customer extends BaseModel<Long> {
     private String lastName;
     private String email;
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "customer")
+    private Set<CustomerAddress> customerAddresses;
+
+    @OneToMany(mappedBy = "customer")
+    private Set<CustomerOrder> orders;
+
+    @OneToMany(mappedBy = "customer")
+    private Set<Review> reviews;
 
     public String getFirstName() {
         return firstName;
@@ -41,5 +54,29 @@ public class Customer extends BaseModel<Long> {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Set<CustomerAddress> getCustomerAddresses() {
+        return customerAddresses;
+    }
+
+    public void setCustomerAddresses(Set<CustomerAddress> customerAddresses) {
+        this.customerAddresses = customerAddresses;
+    }
+
+    public Set<CustomerOrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set<CustomerOrder> orders) {
+        this.orders = orders;
+    }
+
+    public Set<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
     }
 }
