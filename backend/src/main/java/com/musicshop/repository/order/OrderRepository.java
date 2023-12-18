@@ -1,8 +1,8 @@
 package com.musicshop.repository.order;
 
 import com.musicshop.model.order.CustomerOrder;
-import com.musicshop.repository.InMemoryBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public class OrderRepository extends InMemoryBaseRepository<CustomerOrder> {
+public interface OrderRepository extends JpaRepository<CustomerOrder, Long> {
     // Implement specific methods for Order
 }

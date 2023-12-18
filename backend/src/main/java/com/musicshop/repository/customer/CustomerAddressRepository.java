@@ -1,8 +1,8 @@
 package com.musicshop.repository.customer;
 
 import com.musicshop.model.customer.CustomerAddress;
-import com.musicshop.repository.InMemoryBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public class CustomerAddressRepository extends InMemoryBaseRepository<CustomerAddress> {
+public interface CustomerAddressRepository extends JpaRepository<CustomerAddress, Long> {
     // Implement specific methods for CustomerAddress
 }

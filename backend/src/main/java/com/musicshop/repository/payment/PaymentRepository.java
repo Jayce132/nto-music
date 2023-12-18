@@ -1,8 +1,8 @@
 package com.musicshop.repository.payment;
 
 import com.musicshop.model.payment.Payment;
-import com.musicshop.repository.InMemoryBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public class PaymentRepository extends InMemoryBaseRepository<Payment> {
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
     // Implement specific methods for Payment
 }

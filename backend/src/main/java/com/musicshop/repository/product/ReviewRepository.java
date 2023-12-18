@@ -1,8 +1,8 @@
 package com.musicshop.repository.product;
 
 import com.musicshop.model.product.Review;
-import com.musicshop.repository.InMemoryBaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public class ReviewRepository extends InMemoryBaseRepository<Review> {
+public interface ReviewRepository extends JpaRepository<Review, Long> {
     // Implement specific methods for Review
 }
