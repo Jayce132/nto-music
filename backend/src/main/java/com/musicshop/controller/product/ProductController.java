@@ -1,5 +1,8 @@
 package com.musicshop.controller.product;
 
+import com.musicshop.dto.DetailedProductDTO;
+import com.musicshop.dto.SimpleProductDTO;
+import com.musicshop.factory.ProductDTOFactory;
 import com.musicshop.model.product.Product;
 import com.musicshop.event.product.ProductUpdateEvent;
 import com.musicshop.repository.product.ProductRepository;
@@ -9,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
     private final ProductRepository productRepository;
-
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
@@ -25,14 +28,16 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> listAllProducts() {
-        return productRepository.findAll();
+    public List<SimpleProductDTO> listAllProducts() {
+        return productRepository.findAll().stream()
+                .map(ProductDTOFactory::createSimpleProductDTO) // When I list the products I will use their simple representation
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+    public ResponseEntity<DetailedProductDTO> getProductById(@PathVariable Long id) {
         return productRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(product -> ResponseEntity.ok(ProductDTOFactory.createDetailedProductDTO(product))) // Here I use the more detailed DTO
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
