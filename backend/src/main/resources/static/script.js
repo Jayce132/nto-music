@@ -21,6 +21,41 @@ function viewProducts() {
         });
 }
 
+document.getElementById('addProduct').addEventListener('click', addProduct);
+
+function addProduct() {
+    const newName = prompt('Enter product name:', '');
+    const newPrice = prompt('Enter product price:', '');
+
+    if (newName && !isNaN(parseFloat(newPrice))) {
+        const newProduct = {
+            name: newName,
+            price: parseFloat(newPrice)
+        };
+
+        fetch('http://localhost:8080/products', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newProduct)
+        })
+            .then(response => {
+                if (response.status === 201) {
+                    alert('Product added successfully.');
+                    viewProducts(); // Refresh the product list
+                } else {
+                    alert('Failed to add the product.');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding product:', error);
+            });
+    } else {
+        alert('Invalid input. Please try again.');
+    }
+}
+
 function editProduct(productId) {
     const newName = prompt('Enter new product name:', '');
     const newPrice = prompt('Enter new product price:', '');
@@ -31,7 +66,7 @@ function editProduct(productId) {
         };
 
         fetch(`http://localhost:8080/products/${productId}`, {
-            method: 'PUT', headers: {
+            method: 'PATCH', headers: {
                 'Content-Type': 'application/json'
             }, body: JSON.stringify(updatedProduct)
         })

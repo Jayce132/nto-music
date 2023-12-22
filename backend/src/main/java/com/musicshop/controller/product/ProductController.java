@@ -4,58 +4,62 @@ import com.musicshop.dto.DetailedProductDTO;
 import com.musicshop.dto.SimpleProductDTO;
 import com.musicshop.factory.ProductDTOFactory;
 import com.musicshop.model.product.Product;
-import com.musicshop.event.product.ProductUpdateEvent;
-import com.musicshop.repository.product.ProductRepository;
+import com.musicshop.service.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.context.ApplicationEventPublisher;
 
+import javax.xml.bind.ValidationException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductRepository productRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final ProductService productService;
 
     @Autowired
-    public ProductController(ProductRepository productRepository, ApplicationEventPublisher eventPublisher) {
-        this.productRepository = productRepository;
-        this.eventPublisher = eventPublisher;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @GetMapping
     public List<SimpleProductDTO> listAllProducts() {
-        return productRepository.findAll().stream()
-                .map(ProductDTOFactory::createSimpleProductDTO) // When I list the products I will use their simple representation
-                .collect(Collectors.toList());
+        // When I list the products I will use their simple representation
+        return productService.listAllProducts().stream().map(ProductDTOFactory::createSimpleProductDTO).collect(Collectors.toList());
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createProduct(@RequestBody Product product) {
+        // Used wildcard because response can have a Product or a String containing the error message
+        try {
+            Product newProduct = productService.createProduct(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newProduct);
+        } catch (ValidationException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DetailedProductDTO> getProductById(@PathVariable Long id) {
-        return productRepository.findById(id)
-                .map(product -> ResponseEntity.ok(ProductDTOFactory.createDetailedProductDTO(product))) // Here I use the more detailed DTO
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        // Here I use the more detailed DTO
+        return productService.getProductById(id).map(product -> ResponseEntity.ok(ProductDTOFactory.createDetailedProductDTO(product))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
-        return productRepository.findById(id)
-                .map(product -> {
-                    product.setName(productDetails.getName());
-                    product.setDescription(productDetails.getDescription());
-                    product.setPrice(productDetails.getPrice());
-                    product.setQuantityAvailable(productDetails.getQuantityAvailable());
-                    product.setCategory(productDetails.getCategory());
+    public ResponseEntity<DetailedProductDTO> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+        // Here I use the more detailed DTO
+        return productService.updateProduct(id, productDetails).map(product -> ResponseEntity.ok(ProductDTOFactory.createDetailedProductDTO(product))).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
-                    Product updatedProduct = productRepository.save(product);
-                    eventPublisher.publishEvent(new ProductUpdateEvent(this, updatedProduct));
-
-                    return ResponseEntity.ok(updatedProduct);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @PatchMapping("/{id}")
+    // Used this for partial updates,
+    // because PUT expects a full replace and for partial fields it will make the other values null
+    public ResponseEntity<DetailedProductDTO> partialUpdateProduct(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        return productService.partialUpdateProduct(id, updates).map(product -> ResponseEntity.ok(ProductDTOFactory.createDetailedProductDTO(product))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
