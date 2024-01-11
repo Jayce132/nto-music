@@ -1,4 +1,4 @@
-package com.musicshop.dto;
+package com.musicshop.dto.product;
 
 import java.math.BigDecimal;
 

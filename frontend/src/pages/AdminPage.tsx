@@ -3,6 +3,7 @@ import {useState, useEffect} from 'react';
 const AdminPage = () => {
     const [products, setProducts] = useState([]);
     const [newProduct, setNewProduct] = useState({name: '', price: 0});
+    const [selectedDiscount, setSelectedDiscount] = useState('fixed');
 
     useEffect(() => {
         fetchProducts();
@@ -59,6 +60,20 @@ const AdminPage = () => {
             .catch(error => console.error('Error deleting product:', error));
     };
 
+    const applyDiscount = (id, discountType) => {
+        fetch(`http://localhost:8080/api/products/${id}/apply-discount?discountType=${discountType}`, {
+            method: 'PATCH'
+        })
+            .then(response => {
+                if (response.ok) {
+                    fetchProducts(); // Refresh the list after applying discount
+                } else {
+                    console.error('Failed to apply discount');
+                }
+            })
+            .catch(error => console.error('Error applying discount:', error));
+    };
+
     return (
         <div>
             <h1>Admin Page</h1>
@@ -85,18 +100,24 @@ const AdminPage = () => {
                         <li key={product.id}>
                             <input
                                 type="text"
-                                defaultValue={product.name}
+                                value={product.name}
                                 onChange={(e) => product.name = e.target.value}
                             />
                             <input
                                 type="number"
-                                defaultValue={product.price}
+                                value={product.price}
                                 onChange={(e) => product.price = parseFloat(e.target.value) || 0}
                             />
                             <button
                                 onClick={() => handleEdit(product.id, {name: product.name, price: product.price})}>Save
                             </button>
                             <button onClick={() => deleteProduct(product.id)}>Delete</button>
+
+                            <select onChange={(e) => setSelectedDiscount(e.target.value)}>
+                                <option value="fixed">Fixed Amount</option>
+                                <option value="percentage">Percentage</option>
+                            </select>
+                            <button onClick={() => applyDiscount(product.id, selectedDiscount)}>Apply Discount</button>
                         </li>
                     ))}
                 </ul>

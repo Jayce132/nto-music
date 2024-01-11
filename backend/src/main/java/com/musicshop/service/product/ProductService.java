@@ -1,5 +1,7 @@
 package com.musicshop.service.product;
 
+import com.musicshop.discount.DiscountStrategy;
+import com.musicshop.discount.DiscountStrategyFactory;
 import com.musicshop.model.product.Product;
 import com.musicshop.event.product.ProductUpdateEvent;
 import com.musicshop.repository.product.ProductRepository;
@@ -22,11 +24,14 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final DiscountStrategyFactory discountStrategyFactory;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, ApplicationEventPublisher eventPublisher) {
+    public ProductService(ProductRepository productRepository, ApplicationEventPublisher eventPublisher,
+                          DiscountStrategyFactory discountStrategyFactory) {
         this.productRepository = productRepository;
         this.eventPublisher = eventPublisher;
+        this.discountStrategyFactory = discountStrategyFactory;
     }
 
     public List<Product> listAllProducts() {
@@ -34,10 +39,7 @@ public class ProductService {
     }
 
     public Product createProduct(Product product) throws ValidationException {
-        ProductValidator validator =
-                new PriceValidationDecorator(
-                        new NameValidationDecorator(
-                                new BasicProductValidator()));
+        ProductValidator validator = new PriceValidationDecorator(new NameValidationDecorator(new BasicProductValidator()));
 
 
         validator.validate(product);
@@ -86,5 +88,14 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+
+    public Optional<Product> applyDiscount(Long productId, String discountType) {
+        return productRepository.findById(productId).map(product -> {
+            DiscountStrategy discountStrategy = discountStrategyFactory.getDiscountStrategy(discountType);
+            BigDecimal discountedPrice = discountStrategy.applyDiscount(product);
+            product.setPrice(discountedPrice);
+            return productRepository.save(product);
+        });
     }
 }

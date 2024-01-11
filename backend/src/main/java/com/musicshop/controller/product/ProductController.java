@@ -1,8 +1,8 @@
 package com.musicshop.controller.product;
 
-import com.musicshop.dto.DetailedProductDTO;
-import com.musicshop.dto.SimpleProductDTO;
-import com.musicshop.factory.ProductDTOFactory;
+import com.musicshop.dto.product.DetailedProductDTO;
+import com.musicshop.dto.product.SimpleProductDTO;
+import com.musicshop.dto.product.ProductDTOFactory;
 import com.musicshop.model.product.Product;
 import com.musicshop.service.product.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +73,12 @@ public class ProductController {
         } else {
             return ResponseEntity.notFound().build();  // Return a 404 if the product does not exist
         }
+    }
+
+    @PatchMapping("/{id}/apply-discount")
+    public ResponseEntity<?> applyDiscount(@PathVariable Long id, @RequestParam String discountType) {
+        return productService.applyDiscount(id, discountType)
+                .map(product -> ResponseEntity.ok(ProductDTOFactory.createDetailedProductDTO(product)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

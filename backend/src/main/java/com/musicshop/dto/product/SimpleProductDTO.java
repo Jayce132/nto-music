@@ -1,4 +1,4 @@
-package com.musicshop.dto;
+package com.musicshop.dto.product;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

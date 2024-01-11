@@ -1,7 +1,7 @@
-package com.musicshop.factory;
+package com.musicshop.dto.product;
 
-import com.musicshop.dto.SimpleProductDTO;
-import com.musicshop.dto.DetailedProductDTO;
+import com.musicshop.dto.product.SimpleProductDTO;
+import com.musicshop.dto.product.DetailedProductDTO;
 import com.musicshop.model.product.Product;
 
 public class ProductDTOFactory {
