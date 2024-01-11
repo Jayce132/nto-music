@@ -6,22 +6,24 @@ import com.musicshop.model.product.Product;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "order_details")
 public class OrderDetail extends BaseModel<Long> {
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private CustomerOrder order;
+    private UserOrder order;
 
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
-    public CustomerOrder getOrder() {
+    public UserOrder getOrder() {
         return order;
     }
 
-    public void setOrder(CustomerOrder order) {
+    public void setOrder(UserOrder order) {
         this.order = order;
     }
 

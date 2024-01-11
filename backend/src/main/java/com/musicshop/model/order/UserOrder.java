@@ -1,19 +1,19 @@
 package com.musicshop.model.order;
 
 import com.musicshop.model.BaseModel;
-import com.musicshop.model.customer.Customer;
 import com.musicshop.model.payment.Payment;
+import com.musicshop.model.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-@Table(name = "customer_order")
-public class CustomerOrder extends BaseModel<Long> {
+@Table(name = "user_orders")
+public class UserOrder extends BaseModel<Long> {
     @ManyToOne
-    @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private Customer customer;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     private LocalDateTime orderDate;
 
@@ -23,12 +23,12 @@ public class CustomerOrder extends BaseModel<Long> {
     @OneToMany(mappedBy = "order")
     private Set<Payment> payments;
 
-    public Customer getCustomer() {
-        return customer;
+    public User getUser() {
+        return user;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getOrderDate() {

@@ -1,20 +1,21 @@
 package com.musicshop.model.product;
 
 import com.musicshop.model.BaseModel;
-import com.musicshop.model.customer.Customer;
+import com.musicshop.model.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "reviews")
 public class Review extends BaseModel<Long> {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private int rating;
     private String comment;
@@ -28,12 +29,12 @@ public class Review extends BaseModel<Long> {
         this.product = product;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public User getUser() {
+        return user;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getRating() {

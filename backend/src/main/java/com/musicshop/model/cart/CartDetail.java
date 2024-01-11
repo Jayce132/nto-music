@@ -6,6 +6,7 @@ import com.musicshop.model.product.Product;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "cart_details")
 public class CartDetail extends BaseModel<Long> {
 
     @ManyToOne

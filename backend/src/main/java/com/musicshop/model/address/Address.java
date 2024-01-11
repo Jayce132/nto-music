@@ -1,13 +1,15 @@
 package com.musicshop.model.address;
 
 import com.musicshop.model.BaseModel;
-import com.musicshop.model.customer.CustomerAddress;
+import com.musicshop.model.user.UserAddress;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.Set;
 
 @Entity
+@Table(name = "addresses")
 public class Address extends BaseModel<Long> {
     private String street;
     private String number;
@@ -16,7 +18,7 @@ public class Address extends BaseModel<Long> {
     private String country;
 
     @OneToMany(mappedBy = "address")
-    private Set<CustomerAddress> customerAddresses;
+    private Set<UserAddress> userAddresses;
 
     public String getStreet() {
         return street;
@@ -58,11 +60,11 @@ public class Address extends BaseModel<Long> {
         this.country = country;
     }
 
-    public Set<CustomerAddress> getCustomerAddresses() {
-        return customerAddresses;
+    public Set<UserAddress> getUserAddresses() {
+        return userAddresses;
     }
 
-    public void setCustomerAddresses(Set<CustomerAddress> customerAddresses) {
-        this.customerAddresses = customerAddresses;
+    public void setUserAddresses(Set<UserAddress> userAddresses) {
+        this.userAddresses = userAddresses;
     }
 }
