@@ -73,4 +73,8 @@ public class ProductService {
         // Will add similar conditions for other fields that can be updated
         // and are in the updates map
     }
+
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
 }

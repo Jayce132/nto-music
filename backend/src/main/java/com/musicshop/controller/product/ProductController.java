@@ -16,7 +16,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/products")
+//@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -61,5 +62,16 @@ public class ProductController {
     // because PUT expects a full replace and for partial fields it will make the other values null
     public ResponseEntity<DetailedProductDTO> partialUpdateProduct(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         return productService.partialUpdateProduct(id, updates).map(product -> ResponseEntity.ok(ProductDTOFactory.createDetailedProductDTO(product))).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        boolean exists = productService.getProductById(id).isPresent();
+        if (exists) {
+            productService.deleteProduct(id);
+            return ResponseEntity.ok().build();  // Return a successful response
+        } else {
+            return ResponseEntity.notFound().build();  // Return a 404 if the product does not exist
+        }
     }
 }

@@ -1,14 +1,15 @@
 package com.musicshop.config;
 
 import org.springframework.boot.CommandLineRunner;
+
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.musicshop.model.category.Category;
-import com.musicshop.model.customer.Customer;
+import com.musicshop.model.user.User;
 import com.musicshop.model.product.Product;
 import com.musicshop.model.cart.Cart;
 import com.musicshop.repository.category.CategoryRepository;
-import com.musicshop.repository.customer.CustomerRepository;
+import com.musicshop.repository.user.UserRepository;
 import com.musicshop.repository.product.ProductRepository;
 import com.musicshop.repository.cart.CartRepository;
 
@@ -18,10 +19,11 @@ import java.time.LocalDateTime;
 @Component
 public class DataLoader implements CommandLineRunner {
 
+
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
-    private CustomerRepository customerRepository;
+    private UserRepository userRepository;
     @Autowired
     private ProductRepository productRepository;
     @Autowired
@@ -29,6 +31,14 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        // This will be the only user for now
+        User user = new User();
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john.doe@example.com");
+        user.setPhoneNumber("1234567890");
+        User savedUser = userRepository.save(user);
+
         // Create and save categories
         Category instruments = new Category();
         instruments.setCategoryName("Instruments");
@@ -56,17 +66,11 @@ public class DataLoader implements CommandLineRunner {
         product2.setCategory(guitars);
         productRepository.save(product2);
 
-        // Create and save customer and cart
-        Customer customer = new Customer();
-        customer.setFirstName("John");
-        customer.setLastName("Doe");
-        customer.setEmail("john.doe@example.com");
-        customer.setPhoneNumber("1234567890");
-        customerRepository.save(customer);
-
+        // Create a cart for the user
         Cart cart = new Cart();
-        cart.setCustomer(customer);
+        cart.setUser(savedUser); // Associate the cart with the user
         cart.setDateCreated(LocalDateTime.now());
         cartRepository.save(cart);
+
     }
 }

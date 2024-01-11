@@ -2,9 +2,11 @@ package com.musicshop.controller.cart;
 
 import com.musicshop.model.cart.Cart;
 import com.musicshop.model.cart.CartDetail;
+import com.musicshop.model.user.User;
 import com.musicshop.model.product.Product;
 import com.musicshop.repository.cart.CartDetailRepository;
 import com.musicshop.repository.cart.CartRepository;
+import com.musicshop.repository.user.UserRepository;
 import com.musicshop.repository.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,23 +14,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/carts")
+@RequestMapping("api/carts")
 public class CartController {
 
     private final CartRepository cartRepository;
     private final CartDetailRepository cartDetailRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public CartController(CartRepository cartRepository,
                           CartDetailRepository cartDetailRepository,
-                          ProductRepository productRepository) {
+                          ProductRepository productRepository,
+                          UserRepository userRepository) {
         this.cartRepository = cartRepository;
         this.cartDetailRepository = cartDetailRepository;
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @PostMapping
@@ -37,11 +41,18 @@ public class CartController {
         return cartRepository.save(cart);
     }
 
-    @PostMapping("/{cartId}/products/{productId}")
-    public CartDetail addProductToCart(@PathVariable Long cartId,
+    @PostMapping("/{userId}/products/{productId}")
+    public CartDetail addProductToCart(@PathVariable Long userId,
                                        @PathVariable Long productId,
                                        @RequestParam int quantity) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+        Cart cart = cartRepository.findByUser(user).orElseGet(() -> {
+            Cart newCart = new Cart();
+            newCart.setUser(user);
+            newCart.setDateCreated(LocalDateTime.now());
+            return cartRepository.save(newCart);
+        });
+
         Product product = productRepository.findById(productId).orElseThrow();
         CartDetail cartDetail = new CartDetail();
         cartDetail.setCart(cart);

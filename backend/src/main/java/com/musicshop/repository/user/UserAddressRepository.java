@@ -1,8 +1,8 @@
 package com.musicshop.repository.user;
 
-import com.musicshop.model.user.CustomerAddress;
+import com.musicshop.model.user.UserAddress;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomerAddressRepository extends JpaRepository<CustomerAddress, Long> {
-    // Implement specific methods for CustomerAddress
+public interface UserAddressRepository extends JpaRepository<UserAddress, Long> {
+    // Implement specific methods for UserAddress
 }
