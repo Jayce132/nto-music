@@ -27,6 +27,10 @@ public class User extends BaseModel<Long> {
     @OneToMany(mappedBy = "user")
     private Set<Review> reviews;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Notification> notifications;
+
+
     public String getFirstName() {
         return firstName;
     }
@@ -89,5 +93,14 @@ public class User extends BaseModel<Long> {
 
     public void setReviews(Set<Review> reviews) {
         this.reviews = reviews;
+    }
+
+
+    public Set<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
     }
 }

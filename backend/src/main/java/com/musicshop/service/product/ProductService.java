@@ -1,6 +1,7 @@
 package com.musicshop.service.product;
 
 import com.musicshop.model.product.Product;
+import com.musicshop.event.product.ProductUpdateEvent;
 import com.musicshop.repository.product.ProductRepository;
 import com.musicshop.validation.product.BasicProductValidator;
 import com.musicshop.validation.product.NameValidationDecorator;
@@ -8,6 +9,7 @@ import com.musicshop.validation.product.PriceValidationDecorator;
 import com.musicshop.validation.product.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.context.ApplicationEventPublisher;
 
 import javax.xml.bind.ValidationException;
 import java.math.BigDecimal;
@@ -19,10 +21,12 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ApplicationEventPublisher eventPublisher) {
         this.productRepository = productRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<Product> listAllProducts() {
@@ -52,14 +56,20 @@ public class ProductService {
             product.setPrice(productDetails.getPrice());
             product.setQuantityAvailable(productDetails.getQuantityAvailable());
             product.setCategory(productDetails.getCategory());
-            return productRepository.save(product);
+
+            Product updatedProduct = productRepository.save(product);
+            eventPublisher.publishEvent(new ProductUpdateEvent(this, updatedProduct));
+            return updatedProduct;
         });
     }
 
     public Optional<Product> partialUpdateProduct(Long id, Map<String, Object> updates) {
         return productRepository.findById(id).map(product -> {
             applyPartialUpdates(product, updates);
-            return productRepository.save(product);
+
+            Product updatedProduct = productRepository.save(product);
+            eventPublisher.publishEvent(new ProductUpdateEvent(this, updatedProduct));
+            return updatedProduct;
         });
     }
 
