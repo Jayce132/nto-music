@@ -41,3 +41,41 @@
   color: #888;
 }
 
+/* Make input forms the same size as buttons */
+input, select {
+  padding: 0.4em 0.8em;
+  font-size: 1em;
+  margin-left: 10px;
+}
+
+nav a {
+    color: white;
+    margin: 0 1rem;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Just temporary */
+button {
+    margin-left: 10px;
+}
+
+.buttonDanger {
+  background: crimson;
+}
+
+* {
+  margin: 1rem 0 10px;
+}
+
+a {
+  font-size: 1.5rem;
+}
+
+strong {
+  font-size: 20px;
+}
+
+

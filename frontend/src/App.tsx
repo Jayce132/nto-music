@@ -1,5 +1,4 @@
-// src/App.js
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import CartPage from './pages/CartPage';
@@ -7,8 +6,8 @@ import AdminPage from './pages/AdminPage';
 import UserProfilePage from './pages/UserProfilePage';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import "./App.css";
 import Notifications from "./components/Notifications.tsx";
+import "./App.css";
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -58,7 +57,8 @@ function App() {
                             <UserProfilePage/>
                         </ProtectedRoute>
                     }/>
-                    <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} setIsAdmin={setIsAdmin}/>} />
+                    <Route path="/login"
+                           element={<LoginPage setIsAuthenticated={setIsAuthenticated} setIsAdmin={setIsAdmin}/>}/>
                 </Routes>
             </div>
         </Router>

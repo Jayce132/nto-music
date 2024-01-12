@@ -8,6 +8,7 @@ const HomePage = ({isAdmin}) => {
     const [detailedProduct, setDetailedProduct] = useState(null);
 
     useEffect(() => {
+        // Will use the SimpleProductDTO to show just the name and price of a product
         fetch('http://localhost:8080/api/products')
             .then(response => response.json())
             .then(data => setProducts(data))
@@ -16,6 +17,7 @@ const HomePage = ({isAdmin}) => {
 
     const handleProductClick = (product) => {
         setSelectedProduct(product);
+        // Will use the DetailedProductDTO to show all the details of a product
         fetch(`http://localhost:8080/api/products/${product.id}`)
             .then(response => response.json())
             .then(data => setDetailedProduct(data))

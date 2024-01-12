@@ -4,6 +4,9 @@ const LoginPage = ({setIsAuthenticated, setIsAdmin}) => {
     const navigate = useNavigate();
 
     const handleCustomerLogin = () => {
+        // Basic auth using using session storage
+        // End points related to user id will be called with 1
+        // because for now there is a single user
         sessionStorage.setItem('isAuthenticated', 'true');
         sessionStorage.setItem('userId', '1'); // Assuming John Doe has ID 1
         setIsAuthenticated(true);

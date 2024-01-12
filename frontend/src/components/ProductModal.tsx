@@ -1,3 +1,5 @@
+import "./ProductModal.css";
+
 const ProductModal = ({ product, onClose }) => {
     if (!product) return null;
 

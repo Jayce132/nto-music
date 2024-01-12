@@ -24,12 +24,18 @@ const AdminPage = () => {
         })
             .then(response => {
                 if (response.ok) {
-                    fetchProducts(); // Refresh the list after adding
+                    return response.json(); // if the response is ok, parse it as JSON
                 } else {
-                    console.error('Failed to add product');
+                    return response.text().then(text => { throw new Error(text); }); // if not ok, parse it as text and throw an error
                 }
             })
-            .catch(error => console.error('Error adding product:', error));
+            .then(newProduct => {
+                fetchProducts(); // Refresh the list after adding
+            })
+            .catch(error => {
+                alert(`Error adding product: ${error.message}`); // display the error message in an alert
+                console.error('Error adding product:', error);
+            });
     };
 
     const handleEdit = (id, updatedProduct) => {
@@ -128,7 +134,7 @@ const AdminPage = () => {
                             <button
                                 onClick={() => handleEdit(product.id, {name: product.name, price: product.price})}>Save
                             </button>
-                            <button onClick={() => deleteProduct(product.id)}>Delete</button>
+                            <button className={"buttonDanger"} onClick={() => deleteProduct(product.id)}>Delete</button>
 
                             <select onChange={(e) => setSelectedDiscount(e.target.value)}>
                                 <option value="fixed">Fixed Amount</option>
