@@ -40,7 +40,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={
                         <ProtectedRoute>
-                            <HomePage/>
+                            <HomePage isAdmin={isAdmin}/>
                         </ProtectedRoute>
                     }/>
                     <Route path="/cart" element={
