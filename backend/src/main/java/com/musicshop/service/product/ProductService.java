@@ -8,11 +8,9 @@ import com.musicshop.model.cart.CartDetail;
 import com.musicshop.model.product.Product;
 import com.musicshop.event.product.ProductUpdateEvent;
 import com.musicshop.repository.cart.CartDetailRepository;
+import com.musicshop.repository.category.CategoryRepository;
 import com.musicshop.repository.product.ProductRepository;
-import com.musicshop.validation.product.BasicProductValidator;
-import com.musicshop.validation.product.NameValidationDecorator;
-import com.musicshop.validation.product.PriceValidationDecorator;
-import com.musicshop.validation.product.ProductValidator;
+import com.musicshop.validation.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,15 +25,18 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final DiscountStrategyFactory discountStrategyFactory;
     private final CartDetailRepository cartDetailRepository;
 
-
     @Autowired
-    public ProductService(ProductRepository productRepository, ApplicationEventPublisher eventPublisher,
-                          DiscountStrategyFactory discountStrategyFactory, CartDetailRepository cartDetailRepository) {
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
+                          ApplicationEventPublisher eventPublisher,
+                          DiscountStrategyFactory discountStrategyFactory,
+                          CartDetailRepository cartDetailRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
         this.eventPublisher = eventPublisher;
         this.discountStrategyFactory = discountStrategyFactory;
         this.cartDetailRepository = cartDetailRepository;
@@ -46,10 +47,16 @@ public class ProductService {
     }
 
     public Product createProduct(Product product) throws ValidationException {
-        ProductValidator validator = new PriceValidationDecorator(new NameValidationDecorator(new BasicProductValidator()));
-
-
+        ProductValidator validator = new CategoryValidationDecorator(
+                new QuantityAvailableValidationDecorator(
+                        new DescriptionValidationDecorator(
+                                new PriceValidationDecorator(
+                                        new NameValidationDecorator(
+                                                new BasicProductValidator())))));
         validator.validate(product);
+
+        // Handle category logic
+        product.setCategory(categoryRepository.findById(product.getCategory().getId()).orElseThrow(() -> new RuntimeException("Category not found")));
 
         return productRepository.save(product);
     }

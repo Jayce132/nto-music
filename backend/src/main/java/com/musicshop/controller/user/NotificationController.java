@@ -1,9 +1,7 @@
 package com.musicshop.controller.user;
 
 import com.musicshop.model.user.Notification;
-import com.musicshop.model.user.User;
-import com.musicshop.repository.user.NotificationRepository;
-import com.musicshop.repository.user.UserRepository;
+import com.musicshop.service.user.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,27 +12,28 @@ import java.util.List;
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
-    private final NotificationRepository notificationRepository;
-    private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public NotificationController(NotificationRepository notificationRepository, UserRepository userRepository) {
-        this.notificationRepository = notificationRepository;
-        this.userRepository = userRepository;
+    public NotificationController(NotificationService notificationService) {
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Notification>> getNotificationsForUser(@PathVariable Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        List<Notification> notifications = notificationRepository.findByUser(user);
+        List<Notification> notifications = notificationService.getNotificationsForUser(userId);
+        if (notifications.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(notifications);
     }
 
     @DeleteMapping("/{notificationId}")
     public ResponseEntity<?> deleteNotification(@PathVariable Long notificationId) {
-        notificationRepository.deleteById(notificationId);
-        return ResponseEntity.ok().build(); // Return a successful response
+        boolean isDeleted = notificationService.deleteNotification(notificationId);
+        if (!isDeleted) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().build();
     }
 }
-

@@ -2,7 +2,13 @@ import {useState, useEffect} from 'react';
 
 const AdminPage = () => {
     const [products, setProducts] = useState([]);
-    const [newProduct, setNewProduct] = useState({name: '', price: 0});
+    const [newProduct, setNewProduct] = useState({
+        name: '',
+        price: 0,
+        description: '',
+        quantityAvailable: 0,
+        category: { id: 1 } // Default category ID wrapped in an object
+    });
     const [selectedDiscount, setSelectedDiscount] = useState('fixed');
 
     useEffect(() => {
@@ -26,7 +32,9 @@ const AdminPage = () => {
                 if (response.ok) {
                     return response.json(); // if the response is ok, parse it as JSON
                 } else {
-                    return response.text().then(text => { throw new Error(text); }); // if not ok, parse it as text and throw an error
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    }); // if not ok, parse it as text and throw an error
                 }
             })
             .then(newProduct => {
@@ -101,16 +109,26 @@ const AdminPage = () => {
                 <input
                     type="text"
                     placeholder="Product Name"
-                    // rendering issues when using value instead of defaultValue
-                    // related to controlled vs uncontrolled components
                     defaultValue={newProduct.name}
-                    onChange={e => setNewProduct({...newProduct, name: e.target.value})}
+                    onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
                 />
                 <input
                     type="number"
                     placeholder="Product Price"
                     defaultValue={newProduct.price}
-                    onChange={e => setNewProduct({...newProduct, price: e.target.value})}
+                    onChange={e => setNewProduct({ ...newProduct, price: e.target.value })}
+                />
+                <input
+                    type="text"
+                    placeholder="Product Description"
+                    defaultValue={newProduct.description}
+                    onChange={e => setNewProduct({ ...newProduct, description: e.target.value })}
+                />
+                <input
+                    type="number"
+                    placeholder="Quantity Available"
+                    defaultValue={newProduct.quantityAvailable}
+                    onChange={e => setNewProduct({ ...newProduct, quantityAvailable: e.target.value })}
                 />
                 <button onClick={addProduct}>Add Product</button>
             </div>
