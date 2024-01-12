@@ -74,6 +74,19 @@ const AdminPage = () => {
             .catch(error => console.error('Error applying discount:', error));
     };
 
+    const handleNameChange = (id, newName) => {
+        setProducts(products.map(product =>
+            product.id === id ? {...product, name: newName} : product
+        ));
+    };
+
+    const handlePriceChange = (id, newPrice) => {
+        setProducts(products.map(product =>
+            product.id === id ? {...product, price: newPrice} : product
+        ));
+    };
+
+
     return (
         <div>
             <h1>Admin Page</h1>
@@ -82,13 +95,15 @@ const AdminPage = () => {
                 <input
                     type="text"
                     placeholder="Product Name"
-                    value={newProduct.name}
+                    // rendering issues when using value instead of defaultValue
+                    // related to controlled vs uncontrolled components
+                    defaultValue={newProduct.name}
                     onChange={e => setNewProduct({...newProduct, name: e.target.value})}
                 />
                 <input
                     type="number"
                     placeholder="Product Price"
-                    value={newProduct.price}
+                    defaultValue={newProduct.price}
                     onChange={e => setNewProduct({...newProduct, price: e.target.value})}
                 />
                 <button onClick={addProduct}>Add Product</button>
@@ -100,13 +115,15 @@ const AdminPage = () => {
                         <li key={product.id}>
                             <input
                                 type="text"
+                                // rendering issues when using defaultValue instead of value
+                                // related to controlled vs uncontrolled components
                                 value={product.name}
-                                onChange={(e) => product.name = e.target.value}
+                                onChange={(e) => handleNameChange(product.id, e.target.value)}
                             />
                             <input
                                 type="number"
                                 value={product.price}
-                                onChange={(e) => product.price = parseFloat(e.target.value) || 0}
+                                onChange={(e) => handlePriceChange(product.id, parseFloat(e.target.value))}
                             />
                             <button
                                 onClick={() => handleEdit(product.id, {name: product.name, price: product.price})}>Save

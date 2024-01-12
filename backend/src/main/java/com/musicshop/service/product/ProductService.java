@@ -2,8 +2,12 @@ package com.musicshop.service.product;
 
 import com.musicshop.discount.DiscountStrategy;
 import com.musicshop.discount.DiscountStrategyFactory;
+import com.musicshop.event.product.ProductDeletionEvent;
+import com.musicshop.event.product.ProductDiscountEvent;
+import com.musicshop.model.cart.CartDetail;
 import com.musicshop.model.product.Product;
 import com.musicshop.event.product.ProductUpdateEvent;
+import com.musicshop.repository.cart.CartDetailRepository;
 import com.musicshop.repository.product.ProductRepository;
 import com.musicshop.validation.product.BasicProductValidator;
 import com.musicshop.validation.product.NameValidationDecorator;
@@ -25,13 +29,16 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final DiscountStrategyFactory discountStrategyFactory;
+    private final CartDetailRepository cartDetailRepository;
+
 
     @Autowired
     public ProductService(ProductRepository productRepository, ApplicationEventPublisher eventPublisher,
-                          DiscountStrategyFactory discountStrategyFactory) {
+                          DiscountStrategyFactory discountStrategyFactory, CartDetailRepository cartDetailRepository) {
         this.productRepository = productRepository;
         this.eventPublisher = eventPublisher;
         this.discountStrategyFactory = discountStrategyFactory;
+        this.cartDetailRepository = cartDetailRepository;
     }
 
     public List<Product> listAllProducts() {
@@ -86,16 +93,33 @@ public class ProductService {
         // and are in the updates map
     }
 
+
     public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()) {
+            Product product = productOpt.get();
+            List<CartDetail> cartDetails = cartDetailRepository.findByProductId(id);
+            cartDetailRepository.deleteAll(cartDetails); // Delete cart details first
+            productRepository.delete(product); // Then delete the product
+            eventPublisher.publishEvent(new ProductDeletionEvent(this, product, cartDetails));
+        } else {
+            throw new RuntimeException("Product not found");
+        }
     }
+
 
     public Optional<Product> applyDiscount(Long productId, String discountType) {
         return productRepository.findById(productId).map(product -> {
+            BigDecimal originalPrice = product.getPrice();
             DiscountStrategy discountStrategy = discountStrategyFactory.getDiscountStrategy(discountType);
             BigDecimal discountedPrice = discountStrategy.applyDiscount(product);
             product.setPrice(discountedPrice);
-            return productRepository.save(product);
+            Product savedProduct = productRepository.save(product);
+
+            // Publish the discount event
+            eventPublisher.publishEvent(new ProductDiscountEvent(savedProduct, originalPrice));
+
+            return savedProduct;
         });
     }
 }
