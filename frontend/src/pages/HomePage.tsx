@@ -9,7 +9,7 @@ const HomePage = ({isAdmin}) => {
 
     useEffect(() => {
         // Will use the SimpleProductDTO to show just the name and price of a product
-        fetch('http://localhost:8080/api/products')
+        fetch('/api/products')
             .then(response => response.json())
             .then(data => setProducts(data))
             .catch(error => console.error('Error fetching products:', error));
@@ -18,7 +18,7 @@ const HomePage = ({isAdmin}) => {
     const handleProductClick = (product) => {
         setSelectedProduct(product);
         // Will use the DetailedProductDTO to show all the details of a product
-        fetch(`http://localhost:8080/api/products/${product.id}`)
+        fetch(`/api/products/${product.id}`)
             .then(response => response.json())
             .then(data => setDetailedProduct(data))
             .catch(error => console.error('Error fetching product details:', error));

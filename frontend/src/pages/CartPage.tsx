@@ -5,7 +5,7 @@ const CartPage = () => {
     const [cartItems, setCartItems] = useState([]);
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/carts/1/details')
+        fetch('/api/carts/1/details')
             .then(response => response.json())
             .then(data => setCartItems(data))
             .catch(error => console.error('Error fetching cart items:', error));
@@ -13,7 +13,7 @@ const CartPage = () => {
 
     const deleteCartItem = (cartItemId) => {
         if (window.confirm('Are you sure you want to delete this item from the cart?')) {
-            fetch(`http://localhost:8080/api/carts/details/${cartItemId}`, {
+            fetch(`/api/carts/details/${cartItemId}`, {
                 method: 'DELETE'
             })
                 .then(response => {

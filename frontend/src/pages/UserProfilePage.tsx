@@ -5,7 +5,7 @@ const UserProfilePage = () => {
     const customerId = sessionStorage.getItem('userId'); // Get customer ID from session storage
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/users/${customerId}`)
+        fetch(`/api/users/${customerId}`)
             .then(response => response.json())
             .then(data => setUser(data))
             .catch(error => console.error('Error fetching user data:', error));
@@ -16,7 +16,7 @@ const UserProfilePage = () => {
     };
 
     const saveChanges = () => {
-        fetch(`http://localhost:8080/api/users/${customerId}`, {
+        fetch(`/api/users/${customerId}`, {
             method: 'PUT',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(user)

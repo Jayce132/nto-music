@@ -16,14 +16,14 @@ const AdminPage = () => {
     }, []);
 
     const fetchProducts = () => {
-        fetch('http://localhost:8080/api/products')
+        fetch('/api/products')
             .then(response => response.json())
             .then(data => setProducts(data))
             .catch(error => console.error('Error fetching products:', error));
     };
 
     const addProduct = () => {
-        fetch('http://localhost:8080/api/products', {
+        fetch('/api/products', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(newProduct)
@@ -47,7 +47,7 @@ const AdminPage = () => {
     };
 
     const handleEdit = (id, updatedProduct) => {
-        fetch(`http://localhost:8080/api/products/${id}`, {
+        fetch(`/api/products/${id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(updatedProduct)
@@ -63,7 +63,7 @@ const AdminPage = () => {
     };
 
     const deleteProduct = (id) => {
-        fetch(`http://localhost:8080/api/products/${id}`, {method: 'DELETE'})
+        fetch(`/api/products/${id}`, {method: 'DELETE'})
             .then(response => {
                 if (response.ok) {
                     fetchProducts(); // Refresh the list after deleting
@@ -75,7 +75,7 @@ const AdminPage = () => {
     };
 
     const applyDiscount = (id, discountType) => {
-        fetch(`http://localhost:8080/api/products/${id}/apply-discount?discountType=${discountType}`, {
+        fetch(`/api/products/${id}/apply-discount?discountType=${discountType}`, {
             method: 'PATCH'
         })
             .then(response => {
@@ -128,6 +128,7 @@ const AdminPage = () => {
                     type="number"
                     placeholder="Quantity Available"
                     defaultValue={newProduct.quantityAvailable}
+                    // @ts-ignore
                     onChange={e => setNewProduct({ ...newProduct, quantityAvailable: e.target.value })}
                 />
                 <button onClick={addProduct}>Add Product</button>

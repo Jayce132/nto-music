@@ -3,7 +3,7 @@
 document.getElementById('viewProducts').addEventListener('click', viewProducts);
 
 function viewProducts() {
-    fetch('http://localhost:8080/products')
+    fetch('/products')
         .then(response => response.json())
         .then(products => {
             const productList = document.getElementById('productList');
@@ -33,7 +33,7 @@ function addProduct() {
             price: parseFloat(newPrice)
         };
 
-        fetch('http://localhost:8080/products', {
+        fetch('/products', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ function editProduct(productId) {
             name: newName, price: parseFloat(newPrice)
         };
 
-        fetch(`http://localhost:8080/products/${productId}`, {
+        fetch(`/products/${productId}`, {
             method: 'PATCH', headers: {
                 'Content-Type': 'application/json'
             }, body: JSON.stringify(updatedProduct)
@@ -94,7 +94,7 @@ function addToCart(productId) {
         return;
     }
 
-    fetch(`http://localhost:8080/carts/1/products/${productId}?quantity=${quantity}`, {
+    fetch(`/carts/1/products/${productId}?quantity=${quantity}`, {
         method: 'POST'
     })
         .then(response => {
@@ -111,7 +111,7 @@ function addToCart(productId) {
 }
 
 function viewCart() {
-    fetch('http://localhost:8080/carts/1/details')
+    fetch('/carts/1/details')
         .then(response => response.json())
         .then(cartDetails => {
             const cartItems = document.getElementById('cartItems');
@@ -138,7 +138,7 @@ function editCartItem(cartItemId) {
         return;
     }
 
-    fetch(`http://localhost:8080/carts/details/${cartItemId}?newQuantity=${newQuantity}`, {
+    fetch(`/carts/details/${cartItemId}?newQuantity=${newQuantity}`, {
         method: 'PUT'
     })
         .then(response => {
@@ -156,7 +156,7 @@ function editCartItem(cartItemId) {
 
 function deleteCartItem(cartItemId) {
     if (confirm('Are you sure you want to delete this item from the cart?')) {
-        fetch(`http://localhost:8080/carts/details/${cartItemId}`, {
+        fetch(`/carts/details/${cartItemId}`, {
             method: 'DELETE'
         })
             .then(response => {

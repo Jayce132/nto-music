@@ -14,7 +14,7 @@ const Product = ({product, onProductClick, isAdmin}) => {
             return;
         }
 
-        fetch(`http://localhost:8080/api/carts/1/products/${productId}?quantity=${quantity}`, {
+        fetch(`/api/carts/1/products/${productId}?quantity=${quantity}`, {
             method: 'POST'
         })
             .then(response => {

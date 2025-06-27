@@ -10,7 +10,7 @@ const Notifications = () => {
 
     const fetchNotifications = () => {
         if (userId) {
-            fetch(`http://localhost:8080/api/notifications/user/${userId}`)
+            fetch(`/api/notifications/user/${userId}`)
                 .then(response => response.json())
                 .then(data => setNotifications(data))
                 .catch(error => console.error('Error fetching notifications:', error));
@@ -18,7 +18,7 @@ const Notifications = () => {
     };
 
     const deleteNotification = (notificationId) => {
-        fetch(`http://localhost:8080/api/notifications/${notificationId}`, {method: 'DELETE'})
+        fetch(`/api/notifications/${notificationId}`, {method: 'DELETE'})
             .then(() => {
                 // Remove the notification from the state
                 setNotifications(notifications.filter(notification => notification.id !== notificationId));
